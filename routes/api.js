@@ -1,6 +1,6 @@
 const express = require("express");
 const router = express.Router()
 
-router.use('/ninjas', require('./ninjas'))
+router.use('/ninja', require('./ninja'))
 
 module.exports = router
