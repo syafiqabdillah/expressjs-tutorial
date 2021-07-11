@@ -1,22 +1,32 @@
 const express = require("express");
+const mongoose = require("mongoose");
+
 const app = express();
 const mongoose = require("mongoose");
 require("dotenv").config()
 
-app.use(express.urlencoded({ extended: true })); // parse urlencoded
-app.use(express.json()); // parse application/json
-
-const url = process.env.DB_CONNECTION;
-const connParams = {
+mongoose.connect("mongodb://localhost/ninjago", {
   useNewUrlParser: true,
-  useCreateIndex: true,
   useUnifiedTopology: true,
-};
-mongoose
-  .connect(url, connParams)
-  .then(() => console.log("Connected to DB!"))
-  .catch((err) => console.log(err));
+  useFindAndModify: true
+});
+mongoose.Promise = global.Promise;
 
-app.use("/posts", require("./routes/posts"));
+// parse application/x-www-form-urlencoded
+app.use(express.urlencoded({ extended: true }));
+
+// parse application/json
+app.use(express.json());
+
+// routing
+app.use("/api", require("./routes/api"));
+
+// error handling middlewre
+app.use(function (err, req, res, next) {
+  res.status(422).send({
+    error: true,
+    message: err.message,
+  });
+});
 
 app.listen(3030);
