@@ -1,13 +1,22 @@
 const express = require("express");
-
 const app = express();
+const mongoose = require("mongoose");
+require("dotenv").config()
 
-// parse application/x-www-form-urlencoded
-app.use(express.urlencoded({ extended: true }))
+app.use(express.urlencoded({ extended: true })); // parse urlencoded
+app.use(express.json()); // parse application/json
 
-// parse application/json
-app.use(express.json())
+const url = process.env.DB_CONNECTION;
+const connParams = {
+  useNewUrlParser: true,
+  useCreateIndex: true,
+  useUnifiedTopology: true,
+};
+mongoose
+  .connect(url, connParams)
+  .then(() => console.log("Connected to DB!"))
+  .catch((err) => console.log(err));
 
-app.use('/api', require('./routes/api'))
+app.use("/posts", require("./routes/posts"));
 
-app.listen(3030, function () {});
+app.listen(3030);
